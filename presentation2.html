@@ -459,7 +459,7 @@
 					<tr>
 						<td>Run subset of tests</td>
 						<td bgcolor="#990033">not without modifying</td> <!-- red -->
-						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">not without modifying</td> <!-- red -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
@@ -481,7 +481,7 @@
 						<td bgcolor="#990033">not that I found</td> <!-- red -->
 						<td bgcolor="#cfa600">Halt long-running tests, "inherently fragile"</td> <!-- yellow -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
-						<td bgcolor="#cfa600">Time-out not available on Win32agile"</td> <!-- yellow -->
+						<td bgcolor="#cfa600">Time-out not available on Win32"</td> <!-- yellow -->
 					</tr>
 					<tr>
 						<td>Different Output Format</td>
@@ -494,9 +494,9 @@
 					</tr>
 					<tr>
 						<td>Good Assert Functionality</td>
-						<td bgcolor="#678f53">yes</td> <!-- green -->
-						<td bgcolor="#990033">no</td> <!-- red -->
-						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">all tests run or none do</td> <!-- red -->
+						<td bgcolor="#990033">all tests run or none do</td> <!-- red -->
+						<td bgcolor="#990033">all tests run or none do</td> <!-- red -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
@@ -524,18 +524,27 @@
 						<td bgcolor="#990033">not CppUnit2 either</td> <!-- red -->
 						<td bgcolor="#cfa600">other versions may be</td> <!-- yellow -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
 					</tr>
 					<tr>
 						<td>Clear documentation</td>
 						<td bgcolor="#cfa600">clear but not up to date</td> <!-- yellow -->
 						<td bgcolor="#990033">hardly any</td> <!-- red -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">not really</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">up to date but overly verbose</td> <!-- yellow -->
 					</tr>
 					<tr>
 						<td>Repeat test N times</td>
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#990033">not that I found</td> <!-- red -->
 						<td bgcolor="#990033">not that I found</td> <!-- red -->
+						<td bgcolor="#990033">not that I found</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">test case must be specified N times</td> <!-- yellow -->
 					</tr>
 					<tr>
 						<td>License</td>
@@ -548,24 +557,69 @@
 					</tr>
 					<tr>
 						<td>Per-Check message</td>
-						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#990033">no</td> <!-- red -->
+						<td bgcolor="#990033">no</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 					</tr>
 					</table>
 				</section>
-						<!--
-						yellow
-						<td bgcolor="#cfa600"></td> <!-- yellow -->
-						red
-						<td bgcolor="#990033">no</td> <!-- red -->
-						green
-						<td bgcolor="#678f53">yes</td> <!-- green -->
-					
-						-->
 
 				<section>
-					<h2>Features -- Motivation</h2>
+					<h2>Discussion and Conslusions</h2>
+					<ul>
+						<li>After the initial review, CPPUnit and CPPUnitLite seemed too limited, poorly supported, and too ill-maintained for further consideration.</li>
+						<li><font color=47D1D1>That being said, CPPUnitLite is great for development in embedded systems. In this context, CppUnitLite's best feature is arguably the fact it is so stripped down.</font></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions</h2>
+					<ul>
+						<li>CxxTest, xUnit++, Boost, and Google Test were all easy to use, feature rich, and actively maintained</li>
+						<li>CxxTest was by far the easiest framework to get up and running</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- CxxTest</h2>
+					<ul>
+						<li>CxxTest was easy to set up and get running.</li>
+						<li>No main() function must be defined</li>
+						<li>Tests are written in header files</li>
+					</ul>
+					<!--img src="eirian-images/cxxexample.jpeg"-->
+					<code><pre>
+					// MyTestSuite1.h
+					#include <cxxtest/TEstSuite.h>
+
+					class MyTestSuite1 : public CxxTest::TestSuite
+					{
+					public:
+						void testAddition(void)
+						{
+							TS_ASSERT(1 + 1 > 1);
+							TS_ASSERT_EQUALS(1 + 1, 2);
+						}
+					};
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- CxxTest</h2>
+					<ul>
+						<li>After writing the test cases, the developer must run the cxxgentest parser to generate a .cpp file</li>
+						<li>The .cpp file will have to be compiled before it can be run</li>
+						<li>CxxTest was ported to Python from Perl. It has fewer limitations now than it did in the past</li>
+						<li>For instance, older versions could not handle <code><small>#if</code></small> and <code><small>#endif</code></small> preprocessor flags</li>
+						<li>Another example: multiline comments could not previously be parsed by CxxTest. Now it is possible if the user specifies <code><small>--fog-parser</small></code> or <code><small>-f</small></code> on the command line.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions</h2>
 					<ul>
 						<li></li>
 					</ul>

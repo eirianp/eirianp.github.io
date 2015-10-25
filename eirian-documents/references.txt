@@ -1,0 +1,37 @@
+[ 1] Games from Within. Exploring the C++ Unit Testing Framework Jungle. 2004.    
+        http://gamesfromwithin.com/exploring-the-c-unit-testing-framework-jungle
+[ 2] xUnit++. How does xUnit++ compare to …? 2013. 
+       https://bitbucket.org/moswald/xunit/wiki/Compare.wiki
+[ 3] ACCU Professionalism in Programming. C++ Unit Tests Frameworks. 2007. 
+       http://accu.org/index.php/journals/1326
+[ 4] Boost C++ Libraries. Boost Library Documentation. Accessed October 2015.
+       http://www.boost.org/doc/libs
+[ 5] BaRiS AyDiNoZ. Unittest++ vs cppunit. Accessed October 2015. 
+       https://sites.google.com/site/barisaydinoz/unittest-vscppunit
+[ 6] stackoverflow. Repeat testcase in Boost test multiple times. May 2012.
+       http://stackoverflow.com/questions/10554613/repeat-testcase-in-boost-test-
+       multiple-times
+[ 7] SourceForge.net. CppUnit. December 2008.
+        http://sourceforge.net/apps/mediawiki/cppunit/index.php?title=Main_Page
+[ 8] stackoverflow. Boost Unit Test timing mechanism. May 2012.
+       http://stackoverflow.com/questions/10518099/boost-unit-test-timing-
+       mechanism
+[ 9] stackoverflow. How to parametrize [sic] a test using cppunit. November 2014.
+       http://stackoverflow.com/questions/290099/how-to-parametrize-a-test-using-
+       cppunit
+[10] CxxTest. CxxTest User Guide. Accessed October 2015.
+       http://cxxtest.com/guide.html
+[11] SourceForge.net. [soci-users] Using a unit testing framework? March 2013.
+        http://sourceforge.net/p/soci/mailman/soci-users/thread/
+        1364228493.69102.YahooMailNeo@web172205.mail.ir2.yahoo.com/
+[12] Wikipedia. Unit testing. Accessed October 2015.
+        http://en.wikipedia.org/wiki/Unit_testing
+[13] Paul Ammann and Jeff Offutt. Introduction to Software Testing. 2008.
+	Cambridge University Press.
+[14] JM Stecklein. Error Cost Escalation Through the Project Life Cycle. June 2004.
+	http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20100036670.pdf
+	NASA Johnson Space Center.
+[15] Team Professor. Fundamentals of Secure Development. Accessed October 2015.
+	https://teamprofessor.absorbtraining.com/
+[16] Agile Modeling. Introduction to Test Driven Development (TDD). Accessed October 2015.
+	http://agiledata.org/essays/tdd.html

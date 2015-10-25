@@ -1,0 +1,611 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>Unit Testing in C++, an Overview</title>
+
+		<meta name="description" content="Presentation 2 for CSCI 5828">
+		<meta name="author" content="Eirian O Perkins">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- BEGIN PRESENTATION -->
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>Unit Testing in C++: an Overview</h2>
+					<h4><font color=47D1D1>Eirian Owen Perkins</font></h4>
+					<p>
+						CSCI 5828 - Presentation 2
+					</p>
+				</section>
+
+				<section>
+					<h2>Table of Contents</h2>
+					<ol>
+						<li>Introduction and Motivation</li>
+						<li>What is Unit Testing Anyway</li>
+						<li>Unit Testing Terminology</li>
+						<li>Selecting a Harness to Fit Your Needs</li>
+						<li>Features under Consideration</li>
+						<li>Summary of Features</li>
+						<li>Discussion and Conclusions</li>
+					</ol>
+				</section>
+
+				<section>
+					<h2>Introduction and Motivation</h2>
+					<ul>
+						<li>Unit testing is essential to software development<small>[13]</small></li>
+						<ul>
+							<li>Enables developers to detect errors early on</li>
+							<li>a form of white-box testing</li>
+							<li>effective way to support test driven development</li>
+							<li>unit tests can be seen as a "living document" that provide usage examples in context</li>
+							<li>Inspect <i>units</i>, the "lowest" level of testing
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Introduction and Motivation</h2>
+					<ul>
+						<li>Detecting Errors Early: A business case<small>[14, 15]</small></li>
+						<ul>
+						<li>Avoid damage to the company's reputation</li>
+						<li>Boost sales</li>
+						<li>Customer and consumer confidence</li>
+						<li>Catching errors late in the development cycle (or after release) has a "cascading impact" on time and money spent</li>
+						<li>A fix can be <i>orders of magnitude</i> more expensive if caught late</li>
+						</ul>
+					<li><font color=47D1D1>Don't drive business to your competitors!!!</font></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Introduction and Motivation</h2>
+					<ul>
+						<li>White-Box Testing<small>[13]</small></li>
+						<ul>
+						<li>"Deriving tests from the source code internals of the software, specifically including branches, individual conditions, and statements."</li>
+						<li>Are the "guts" doing what we think they're doing?</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Introduction and Motivation</h2>
+					<ul>
+						<li>Test-Driven Development<small>[16]</small><img src="http://www.agiledata.org/images/tddSteps.jpg", height="550" align="right", wrap="soft"></li>
+						<ol>
+						<li>Write tests based on acceptance criteria. </li>
+						<li>Run the tests. Tests will not pass until proper code is written</li>
+						<li>Update code</li>
+						<li>Run the tests again</li>
+						<li>Update code until all tests pass</li>
+						</ol>
+						<li>"Test-Driven Development = Refactoring + Test First Development"</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is Unit Testing Anyway?</h2>
+					<ul>
+						<li>Unit Testing is...<small>[13]</small></li>
+						<ul>
+						<li>The "lowest" level of testing</li>
+						<li>No knowledge of the "encapsulating software application"</li>
+						<li>The developer's responsibility</li>
+						<li>Testing at the function, method, or module level</li>
+						<li>Coverage metrics such as branch or statement coverage may be captured at this level</li>
+						</ul>
+						<li>Unit tests should be independent</li>
+						<ul>
+						<li>The result of a previous unit test should not affect a subsequent test</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is Unit Testing Anyway?</h2>
+					<ul>
+						<li>Unit Testing is NOT...</li>
+						<ul>
+						<li>Integration testing</li>
+						<ul>
+							<li>testing a combination of modules</li>
+						</ul>
+						<li>Black-box testing</li>
+						<ul>
+							<li>testing without knowledge of the internals</li>
+						</ul>
+						<li>System testing</li>
+						<ul>
+							<li>black-box testing at the application level</li>
+						</ul>
+						<li>A bench test</li>
+						<ul>
+							<li>testing with software or hardware assistance, for instance with a simulator</li>
+						</ul>
+					</ul>
+					<small>
+					<p style="font-size:12px">https://en.wikipedia.org/wiki/Black-box_testing<br>
+					https://en.wikipedia.org/wiki/Test_bench<br>
+					http://www.tutorialspoint.com/software_testing_dictionary/system_testing.htm<br>
+					https://en.wikipedia.org/wiki/Integration_testing</p>
+					</small>
+				</section>
+
+				<section>
+					<h2>Unit Testing Terminology</h2>
+					<ul>
+						<li>Test Case</li>
+						<li>Test Suite</li>
+						<li>Test Harness</li>
+						<li>Mocking and Stubbing</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Unit Testing Terminology</h2>
+					<ul>
+						<li>Test Case</li>
+						<ul>
+							<li>An individual test. For example:</li>
+							<li>Consider testing isPrime()</li>
+							<li>isPrime(42) == FALSE</li>
+							<li>isPrime(17) == TRUE</li>
+							<li>These are both a test case evaluating isPrime().</li>
+						</ul>
+					</ul>
+					<p style="font-size:12px">https://en.wikipedia.org/wiki/Unit_testing</p>
+				</section>
+
+				<section>
+					<h2>Unit Testing Terminology</h2>
+					<ul>
+						<li>Test Suite</li>
+						<ul>
+							<li>A collection of test cases</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Unit Testing Terminology</h2>
+					<ul>
+						<li>Test Harness</li>
+						<ul>
+							<li>The software framework that runs test suites</li>
+						</ul>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Unit Testing Terminology</h2>
+					<ul>
+						<li>Mocking and Stubbing</li>
+						<ul>
+							<li>Simulating some feature or piece of code</li>
+							<li>For instance, returning a pre-defined string instead of querying a database</li>
+							<li>Another example: returning some status from hardware that may otherwise be difficult to replicate</li>
+						</ul>
+						<li>Mocking is more in-depth than stubbing</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Selecting a Framework to Fit Your Needs</h2>
+					<ul>
+						<li>There is a large selection of unit testing frameworks available to C++ developers</li>
+						<li>Narrowing down a list of frameworks is a task in and of itself</li>
+						<li>The selections on the remaining slides were selected after reading reviews, recommendation, and discussions</li>
+						<li>Noteworthy discussion: <i>Exploring the C++ Unit Testing Framework Jungle</i></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Selecting a Framework to Fit Your Needs</h2>
+					<ul>
+						<li>Recommendation Preview:</li>
+						<ul>
+						<li>Boost Test</li>
+							<ul>
+							<li style="font-size:25px">Large community, rich feature set</li>
+							</ul>
+						<li>Google Test</li>
+							<ul>
+							<li style="font-size:25px">Large community, used in well-known projects such as the LLVM compiler. </li>
+							</ul>
+						<li>CppUnit</li>
+							<ul>
+							<li style="font-size:25px">Port of JUnit. Java developers may be reasonably familiar with this.</li>
+							</ul>
+						<li>CppUnitLite</li>
+							<ul>
+							<li style="font-size:25px">Stripped down version of CppUnit;  recommended for embedded systems.</li>
+							</ul>
+						<li>xUnit++</li>
+							<ul>
+							<li style="font-size:20px">Newer project designed as an alternative to Boost Test and Google Test</li>
+							</ul>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features under Consideration (I)</h2>
+					<ul>
+						<font color=47D1D1>
+						<li>Run subset of tests in the test suite</li>
+						<li>Portable -- minimal dependencies</li>
+						<li>Time-Related Support</li>
+						<li>Supports different output formats? Consider XML</li>
+						<li>"Good" assert functionality</li>
+						<ul>
+						<li>Supports non-fatal failures</li>
+						<li>Supports fatal failures</li>
+						</ul>
+						<li>Handles exceptions and crashes well</li>
+						</font>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features under Consideration (II)</h2>
+					<ul>
+						<font color=47D1D1>
+						<li>Minimum work required to add new test suites</li>
+						<li>Actively Maintained</li>
+						<li>Clear, up to date documentation</li>
+						<li>Mocking Capability</li>
+						<li>Repeat test N times</li>
+						<li>License</li>
+						<li>Per-check message</li>
+						</font>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Run subset of tests in the test suite</font></li>
+						<ul>
+						<li>Some test harnesses support running all tests or no tests</li>
+						<li>Sometimes a developer would prefer to run a subset of test cases in a test suite</li>
+						<li>Some tests may be long-running</li>
+						<li>A developer may be interested in one test case at a time during test-driven development</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Portable -- minimal dependencies</font></li>
+						<ul>
+						<li>What third party libraries are required for this test harness to run?</li>
+						<li>The software application under development is probably deployed to multiple platforms or environments</li>
+						<li>Developers should test their code in environments where the product will be deployed</li>
+						<li>The development environment might change</li>
+						<li>Dependencies may be come deprecated</li>
+						<li>For this reason, <i>portability</i> in terms of minimal dependencies should be evaluated</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Time-Related Support</font><small>[8]</small></li>
+						<ul>
+						<li>Does the framework support timing-out tests? </li>
+						<li>Report the time each test case took to run</li>
+						<li>Report if a test exceeds some time limit</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Supports different output formats</font></li>
+						<li>Teams may want to run unit tests after <i>automated builds</i></li>
+						<li>Teams may want to run unit tests on a regular schedule (nightly, for instance)</li>
+						<li>When either of the above are desired, it makes sense to send out email summaries</li>
+						<li>How to summarize output? How to parse?</li>
+						<li>Specification of a standard output format like XML is "nice to have" for these purposes</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>"Good" assert functionality</font></li>
+						<li><font color=47D1D1>Supports non-fatal failures</font></li>
+						<li><font color=47D1D1>Supports fatal failures</font></li>
+						<ul>
+						<li>Some test harnesses abort after a single test fails (fatal failure)</li>
+						<li>Developers may want to continue running and see the total number of tests that pass/fail (non-fatal failure)</li>
+						<li>Alternatively, if some critical function fails, there may be no reason to continue the test</li>
+						<li>In that case, developers may want the test suite to halt</li>
+						<li>Are both behaviors available? Quitting immediately(fatal) VS finish running tests (non-fatal)</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Handles exceptions and crashes well</font></li>
+						<li>It's reasonable to expect application code to throw exceptions</li>
+						<li>Developers may even want to check that an exception was thrown</li>
+						<li>The test suite should be able to handle this instead of dumping core</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Minimum work required to add new test suites</font></li>
+						<li>Software is continually growing. Developers will need to add new test suites for every module under test</li>
+						<li>It should be trivial to add a new test suite</li>
+						<li>Don't waste development time setting up boiler-plate code</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Actively Maintained</font></li>
+						<li>Avoid using deprecated software</li>
+						<li>...or software that has a high probability of becoming deprecated</li>
+						<li>As we know, code always has defects</li>
+						<li>Use a test harness under active maintenance</li>
+						<li>Newer releases fix bugs</li>
+						<li>Newer releases add features</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Clear, up to date documentation</font></li>
+						<li>Trying to figure out "how-to" with poorly documented software is a time-sink</li>
+						<li>Unit test harnesses should <i>help</i> developers</li>
+						<li>Developers must have adequate instruction on how to use the test harness</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Mocking Capability</font></li>
+						<ul>
+							<li>Moot point, it turns out most frameworks will work with an outside mock library</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Repeat test N times</font></li>
+						<li>There may be good reason to run a test repeatedly</li>
+						<li>Example from Hewlett-Packard: I had to run a single test 800 times in order to consistently reproduce a failure</li>
+						<li>We saw plenty examples in class -- a developer may want to reproduce failure in a concurrent application that reproduces infrequently</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>License</font></li>
+						<li>If the application under development is not open-source, do not use a third party library that requires your code to be open-source</li>
+						<li>Your organization may not want to pay license fees, if any are required</li>
+						<li>There are legal considerations</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Per-check message</font></li>
+						<li>Is a message generated for each test case in a test suite?</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Summary of Features</h2>
+					<table cellspacing=0 cellpadding=6 style="font-size:15px">
+					<tr>
+						<th></th>
+						<th>CppUnit</th>
+						<th>CppUnitLite</th>
+						<th>CxxTest</th>
+						<th>xUnit++</th>
+						<th>Google Test</th>
+						<th>Boost Test</th>
+					</tr>
+					<tr>
+						<td>Run subset of tests</td>
+						<td bgcolor="#990033">not without modifying</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Minimal Dependencies</td>
+						<td bgcolor="#cfa600">Issues integrating with visual studio</td> <!-- yellow -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">requires python</td> <!-- yellow -->
+						<td bgcolor="#cfa600">Requires GCC 4.7 or above</td> <!-- yellow -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">Requires Boost Test library</td> <!-- yellow -->
+					</tr>
+					<tr>
+						<td>Time-Related support</td>
+						<td bgcolor="#cfa600">there exists an example</td> <!-- yellow -->
+						<td bgcolor="#cfa600">unsure</td> <!-- yellow -->
+						<td bgcolor="#990033">not that I found</td> <!-- red -->
+						<td bgcolor="#cfa600">Halt long-running tests, "inherently fragile"</td> <!-- yellow -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">Time-out not available on Win32agile"</td> <!-- yellow -->
+					</tr>
+					<tr>
+						<td>Different Output Format</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#cfa600">trivial to add more</td> <!-- yellow -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Good Assert Functionality</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">no</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Handles Exceptions well</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">no, must be added</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Minimal work to add new suite</td>
+						<td bgcolor="#990033">no</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Actively Maintained</td>
+						<td bgcolor="#990033">not CppUnit2 either</td> <!-- red -->
+						<td bgcolor="#cfa600">other versions may be</td> <!-- yellow -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Clear documentation</td>
+						<td bgcolor="#cfa600">clear but not up to date</td> <!-- yellow -->
+						<td bgcolor="#990033">hardly any</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Repeat test N times</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">not that I found</td> <!-- red -->
+						<td bgcolor="#990033">not that I found</td> <!-- red -->
+					</tr>
+					<tr>
+						<td>License</td>
+						<td bgcolor="#cfa600">GNU LGPL</td> <!-- yellow -->
+						<td bgcolor="#cfa600">none in original version; various in modified versions</td> <!-- yellow -->
+						<td bgcolor="#cfa600">GNU LGPLv3</td> <!-- yellow -->
+						<td bgcolor="#678f53">MIT</td> <!-- green -->
+						<td bgcolor="#678f53">BSD</td> <!-- green -->
+						<td bgcolor="#678f53">Boost Software License</td> <!-- green -->
+					</tr>
+					<tr>
+						<td>Per-Check message</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">no</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
+					</table>
+				</section>
+						<!--
+						yellow
+						<td bgcolor="#cfa600"></td> <!-- yellow -->
+						red
+						<td bgcolor="#990033">no</td> <!-- red -->
+						green
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					
+						-->
+
+				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li></li>
+					</ul>
+				</section>
+
+
+
+			<!-- END PRESENTATION -->
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

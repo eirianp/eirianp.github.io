@@ -591,20 +591,18 @@
 						<li>Tests are written in header files</li>
 					</ul>
 					<!--img src="eirian-images/cxxexample.jpeg"-->
-					<code><pre>
-					// MyTestSuite1.h
-					#include <cxxtest/TEstSuite.h>
+					<pre><code>// MyTestSuite1.h
+#include &lt;cxxtest/TestSuite.h&gt;
 
-					class MyTestSuite1 : public CxxTest::TestSuite
-					{
-					public:
-						void testAddition(void)
-						{
-							TS_ASSERT(1 + 1 > 1);
-							TS_ASSERT_EQUALS(1 + 1, 2);
-						}
-					};
-					</code></pre>
+class MyTestSuite1 : public CxxTest::TestSuite
+{
+public:
+	void testAddition(void)
+	{
+		TS_ASSERT(1 + 1 &gt; 1);
+		TS_ASSERT_EQUALS(1 + 1, 2);
+	}
+};</code></pre>
 				</section>
 
 				<section>
@@ -615,6 +613,36 @@
 						<li>CxxTest was ported to Python from Perl. It has fewer limitations now than it did in the past</li>
 						<li>For instance, older versions could not handle <code><small>#if</code></small> and <code><small>#endif</code></small> preprocessor flags</li>
 						<li>Another example: multiline comments could not previously be parsed by CxxTest. Now it is possible if the user specifies <code><small>--fog-parser</small></code> or <code><small>-f</small></code> on the command line.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- CxxTest</h2>
+					<ul>
+						<li>+ CxxTest had many of the desirable features considered</li>
+						<li>+ CxxTest had the most thorough, easy to read, and understandable documentation out of any of the considered frameworks</li>
+						<br>
+						<li>- Python 2.4-3.3 are supported, but 2.4 will no longer be supported in upcoming releases</li>
+						<li>- CxxTest does not display the time spent running each test</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- xUnit++</h2>
+					<ul style="font-size:25px">
+						<li>At first glance, xUnit++ looked as promising as CxxTest</li>
+					<img src="eirian-images/xunit_self_eval.png" height=465 align=right>
+						<li>Let's take a look at their self evaluation (from the <a href="https://bitbucket.org/moswald/xunit/wiki/Compare.wiki">xUnit++ webpage</a>)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- xUnit++</h2>
+					<ul>
+						<li>Upon further inspection, I found their "how does xUnit++ compare to ...?" table <b>somewhat irrelevant and misleading</b></li>
+					<ul>
+						<li>Including a test runner isn't much of an advantage</li>
+					</ul>
 					</ul>
 				</section>
 

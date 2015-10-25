@@ -291,6 +291,7 @@
 						<li>Repeat test N times</li>
 						<li>License</li>
 						<li>Per-check message</li>
+						<li>Fixture support</li>
 						</font>
 					</ul>
 				</section>
@@ -445,8 +446,16 @@
 				</section>
 
 				<section>
+					<h2>Features -- Motivation</h2>
+					<ul>
+						<li><font color=47D1D1>Fixture support</font></li>
+						<li>Support for setUp() and tearDown() methods</li>
+					</ul>
+				</section>
+
+				<section>
 					<h2>Summary of Features</h2>
-					<table cellspacing=0 cellpadding=6 style="font-size:15px">
+					<table cellspacing=0 cellpadding=6 style="font-size:14px">
 					<tr>
 						<th></th>
 						<th>CppUnit</th>
@@ -564,6 +573,15 @@
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 						<td bgcolor="#678f53">yes</td> <!-- green -->
 					</tr>
+					<tr>
+						<td>Fixture Support</td>
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#990033">must be added</td> <!-- red -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+						<td bgcolor="#678f53">yes</td> <!-- green -->
+					</tr>
 					</table>
 				</section>
 
@@ -638,16 +656,159 @@ public:
 
 				<section>
 					<h2>Discussion and Conslusions -- xUnit++</h2>
-					<ul>
-						<li>Upon further inspection, I found their "how does xUnit++ compare to ...?" table <b>somewhat irrelevant and misleading</b></li>
+					<ul style="font-size:35px">
+						<li>xUnit++ gives itself a deceptively good evaluation.</li>
 					<ul>
 						<li>Including a test runner isn't much of an advantage</li>
+						<li>A test runner is essentially a boiler-plate file with main() defined</li>
+						<li>Boost test DOES NOT REQUIRE a user-supplied test runner.</li>
+						<li>xUnit++ boasts that it has support for attributes, but fails to give motivation or use use cases for attributes. There is little distinction between attributes and test suites.</li>
+						<li>xUnit++ reports that it has support for halting long-running tests, but the actual documentation says that this features is "fragile."</li>
 					</ul>
 					</ul>
 				</section>
 
 				<section>
-					<h2>Discussion and Conslusions</h2>
+					<h2>Discussion and Conslusions -- Boost Test</h2>
+					<ul>
+						<li>Boost Test has an enormous and useful feature set</li>
+						<li>For example: Boost gives you the option to follow fork'd children and abort if they do not return a 0 status</li>
+						<li>A user-supplied test runner is not required, but is easy to set up if desired</li>
+						<ul>
+						<li>For instance, it is straight-forward to set up a test runner to set options from a configuration file</li>
+						<li>This may be useful in different environments -- don't run a test if it's not relevant</li>
+						</ul>
+						<li>Simply use a macro to define test cases and test suites. Test cases may exist inside of test suites.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Boost Test</h2>
+					<ul style="font-size:22px">
+						<li><a href="http://www.boost.org/doc/libs/1_47_0/libs/test/doc/html/tutorials/hello-the-testing-world.html">A test case example:</a></li>
+						<li>Notice BOOST_CHECK and BOOST_REQUIRE. CHECK is non-fatal, while REQUIRE is fatal and aborts on a failure case.</li>
+						<li>Adding a test suite requires an additional 2 lines only</li>
+					</ul>
+<code><pre style="font-size:12px">#define BOOST_TEST_MODULE MyTest
+#include &lt;boost/test/unit_test.hpp&gt;
+
+int add( int i, int j ) { return i+j; }
+
+BOOST_AUTO_TEST_CASE( my_test )
+{
+    // seven ways to detect and report the same error:
+    BOOST_CHECK( add( 2,2 ) == 4 );        // #1 continues on error
+
+    BOOST_REQUIRE( add( 2,2 ) == 4 );      // #2 throws on error
+
+    if( add( 2,2 ) != 4 )
+      BOOST_ERROR( "Ouch..." );            // #3 continues on error
+
+    if( add( 2,2 ) != 4 )
+      BOOST_FAIL( "Ouch..." );             // #4 throws on error
+
+    if( add( 2,2 ) != 4 ) throw "Ouch..."; // #5 throws on error
+
+    BOOST_CHECK_MESSAGE( add( 2,2 ) == 4,  // #6 continues on error
+                         "add(..) result: " &lt;&lt; add( 2,2 ) );
+
+    BOOST_CHECK_EQUAL( add( 2,2 ), 4 );	  // #7 continues on error
+}</code></pre>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Boost Test</h2>
+					<ul>
+						<li>Their documentation sucks.</li>
+						<li>There's a LOT of documentation</li>
+						<li>a LOT of documentation isn't necessarily a good thing</li>
+						<li>it's overly verbose, unclear, and in some cases misleading</li>
+						<li>IMHO StackOverflow is a better resource than the Boost webpage</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Google Test</h2>
+					<ul style="font-size:32px">
+						<li>Google Test is by far the most feature-rich, easy-to-use framework under consideration</li>
+						<li>The documentation is up to date and easy to read</li>
+						<li>...BUT sometimes leaves out important details</li>
+						<ul>
+							<li>like how to compile test suites</li>
+							<li>There's an option to "drop" the developer into the GDB debugger on failure</li>
+							<li>the details are somewhat unclear</li>
+							<li>the test must be run INSIDE the debugger to begin with</li>
+							<li>setting the environment variable GTEST_BREAK_ON_FAILURE=1 enables this behavior</li>
+							<li>let's take a look</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Google Test</h2>
+<code><pre style="font-size:12px">
+// Tests factorial of positive numbers.
+TEST(FactorialTest, Positive) {
+  EXPECT_EQ(1, Factorial(1));
+  EXPECT_EQ(2, Factorial(2));
+  EXPECT_EQ(6, Factorial(3));
+  EXPECT_EQ(40320, Factorial(8));
+}
+</code></pre>
+<code><pre style="font-size:12px">
+(gdb) run
+Starting program: /home/yourfavoriteprotein/bin/cpp_unit_test_frameworks/gtest-1.7.0/samples/mytest 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+Running main() from test_main.cc
+[==========] Running 6 tests from 2 test cases.
+[----------] Global test environment set-up.
+[----------] 3 tests from FactorialTest
+[ RUN      ] FactorialTest.Negative
+[       OK ] FactorialTest.Negative (0 ms)
+[ RUN      ] FactorialTest.Zero
+[       OK ] FactorialTest.Zero (0 ms)
+[ RUN      ] FactorialTest.Positive
+sample1_unittest.cc:112: Failure
+Value of: 2*3
+  Actual: 6
+Expected: 8
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0000000000413427 in testing::UnitTest::AddTestPartResult(testing::TestPartResult::Type,         
+char const*, int, std::string const&, std::string const&) ()
+</code></pre>
+<p style="font-size:22px">Since the developer is in the debugger, she can use gdb to figure out what went wrong.</p>
+<p style="font-size:12px">Example from https://code.google.com/p/googletest/source/browse/trunk/samples/sample1_unittest.cc and http://stackoverflow.com/questions/23746585/why-is-google-test-segfaulting</p>
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Google Test</h2>
+					<ul style="font-size:25px">
+						<li>Here's what it looks like when GTEST_BREAK_ON_FAILURE=0</li>
+					</ul>
+<img src="eirian-images/gtest_nocrash.jpeg">
+				</section>
+
+				<section>
+					<h2>Discussion and Conslusions -- Google Test</h2>
+					<ul style="font-size:25px">
+						<li>Here's what it looks like when GTEST_BREAK_ON_FAILURE=0</li>
+						<li>As noted, Google Test is incredibly feature-rich.</li>
+						<li>One example is <i>sharding</i>, which is not shared by other frameworks.</li>
+						<li>Sharding can be used to run tests concurrently on different machines</li>
+						<br>
+						<li>Google Test also has fatal and non-fatal assertions</li>
+						<li>Test can be disabled easily</li>
+						<li>Even if a test is disabled, it may be selected to be run individually </li>
+						<li>This flexibility is noteworthy</li>
+						<br>
+						<li>The colorful output, as seen on the previous slide, is also "nice to have."</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Final remarks</h2>
 					<ul>
 						<li></li>
 					</ul>

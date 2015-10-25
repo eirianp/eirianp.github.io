@@ -58,6 +58,7 @@
 						<li>Features under Consideration</li>
 						<li>Summary of Features</li>
 						<li>Discussion and Conclusions</li>
+						<li>Final Remarks</li>
 					</ol>
 				</section>
 
@@ -81,7 +82,7 @@
 						<li>Detecting Errors Early: A business case<small>[14, 15]</small></li>
 						<ul>
 						<li>Avoid damage to the company's reputation</li>
-						<li>Boost sales</li>
+						<li>Boost product sales</li>
 						<li>Customer and consumer confidence</li>
 						<li>Catching errors late in the development cycle (or after release) has a "cascading impact" on time and money spent</li>
 						<li>A fix can be <i>orders of magnitude</i> more expensive if caught late</li>
@@ -240,24 +241,29 @@
 						<ul>
 						<li>Boost Test</li>
 							<ul>
-							<li style="font-size:25px">Large community, rich feature set</li>
+							<li style="font-size:20px">Large community, rich feature set</li>
 							</ul>
 						<li>Google Test</li>
 							<ul>
-							<li style="font-size:25px">Large community, used in well-known projects such as the LLVM compiler. </li>
+							<li style="font-size:20px">Large community, used in well-known projects such as the LLVM compiler. </li>
 							</ul>
 						<li>CppUnit</li>
 							<ul>
-							<li style="font-size:25px">Port of JUnit. Java developers may be reasonably familiar with this.</li>
+							<li style="font-size:20px">Port of JUnit. Java developers may be reasonably familiar with this.</li>
 							</ul>
 						<li>CppUnitLite</li>
 							<ul>
-							<li style="font-size:25px">Stripped down version of CppUnit;  recommended for embedded systems.</li>
+							<li style="font-size:20px">Stripped down version of CppUnit;  recommended for embedded systems.</li>
 							</ul>
 						<li>xUnit++</li>
 							<ul>
 							<li style="font-size:20px">Newer project designed as an alternative to Boost Test and Google Test</li>
 							</ul>
+						<li>CxxTest</li>
+							<ul>
+							<li style="font-size:20px">Seems to receive consistently good reviews and does not rely on "advanced" features of C++ or C++11 because it is implemented in Python</li>
+							</ul>
+						</ul>
 						</ul>
 					</ul>
 				</section>
@@ -359,7 +365,7 @@
 						<li>Developers may want to continue running and see the total number of tests that pass/fail (non-fatal failure)</li>
 						<li>Alternatively, if some critical function fails, there may be no reason to continue the test</li>
 						<li>In that case, developers may want the test suite to halt</li>
-						<li>Are both behaviors available? Quitting immediately(fatal) VS finish running tests (non-fatal)</li>
+						<li>Are both behaviors available? Quitting immediately (fatal) VS finish running tests (non-fatal)</li>
 						</ul>
 					</ul>
 				</section>
@@ -809,10 +815,52 @@ char const*, int, std::string const&, std::string const&) ()
 
 				<section>
 					<h2>Final remarks</h2>
-					<ul>
-						<li></li>
-					</ul>
+					<p>Due to the richness of features, ease of use, and clarity of the documentation, Google Test earns my recommendation as a unit test harness. That being said, it is roughly equivalent to Boost Test. Therefore, if Boost Test is in use anyway, I see no strong reason to switch to Google Test other than personal taste. It is worth noting that Google Test is compatible with other test harnesses. It appears that changing the test runner slightly would allow some other framework to drive, even while executing Google Test test cases.</p>
 				</section>
+
+				<section>
+					<h2>References</h2>
+<p align=left style="font-size:14px">[ 1] Games from Within. Exploring the C++ Unit Testing Framework Jungle. 2004.    <br>
+        http://gamesfromwithin.com/exploring-the-c-unit-testing-framework-jungle<br>
+[ 2] xUnit++. How does xUnit++ compare to …? 2013. <br>
+       https://bitbucket.org/moswald/xunit/wiki/Compare.wiki <br>
+[ 3] ACCU Professionalism in Programming. C++ Unit Tests Frameworks. 2007. <br> 
+       http://accu.org/index.php/journals/1326 <br>
+[ 4] Boost C++ Libraries. Boost Library Documentation. Accessed October 2015. <br>
+       http://www.boost.org/doc/libs <br>
+[ 5] BaRiS AyDiNoZ. Unittest++ vs cppunit. Accessed October 2015. <br> 
+       https://sites.google.com/site/barisaydinoz/unittest-vscppunit <br>
+[ 6] stackoverflow. Repeat testcase in Boost test multiple times. May 2012. <br>
+       http://stackoverflow.com/questions/10554613/repeat-testcase-in-boost-test-multiple-times <br>
+[ 7] SourceForge.net. CppUnit. December 2008. <br>
+        http://sourceforge.net/apps/mediawiki/cppunit/index.php?title=Main_Page <br>
+[ 8] stackoverflow. Boost Unit Test timing mechanism. May 2012. <br>
+       http://stackoverflow.com/questions/10518099/boost-unit-test-timing-mechanism <br>
+[ 9] stackoverflow. How to parametrize [sic] a test using cppunit. November 2014. <br>
+       http://stackoverflow.com/questions/290099/how-to-parametrize-a-test-using-cppunit <br>
+[10] CxxTest. CxxTest User Guide. Accessed October 2015. <br>
+       http://cxxtest.com/guide.html <br>
+[11] SourceForge.net. [soci-users] Using a unit testing framework? March 2013. <br>
+        http://sourceforge.net/p/soci/mailman/soci-users/thread/1364228493.69102.YahooMailNeo@web172205.mail.ir2.yahoo.com/ <br>
+[12] Wikipedia. Unit testing. Accessed October 2015. <br>
+        http://en.wikipedia.org/wiki/Unit_testing <br>
+[13] Paul Ammann and Jeff Offutt. Introduction to Software Testing. 2008. <br>
+	Cambridge University Press. <br>
+[14] JM Stecklein. Error Cost Escalation Through the Project Life Cycle. June 2004. <br>
+	http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20100036670.pdf <br>
+	NASA Johnson Space Center. <br>
+[15] Team Professor. Fundamentals of Secure Development. Accessed October 2015. <br>
+	https://teamprofessor.absorbtraining.com/ <br>
+[16] Agile Modeling. Introduction to Test Driven Development (TDD). Accessed October 2015. <br>
+	http://agiledata.org/essays/tdd.html <br>
+</p>
+				</section>
+
+				<section>
+					<h2>Thank you!</h2>
+				</section>
+
+
 
 
 

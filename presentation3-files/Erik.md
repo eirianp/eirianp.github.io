@@ -23,3 +23,19 @@ January 2004: Valgrind won a merit (bronze) Open Source Award.
 *Projects using or have used Valgrind* found here: http://valgrind.org/gallery/users.html
 
 *Something to know* Valgrind is not just a leak checker, it can help find latent bugs even when they don't cause your program to fail or crach -> refers to the difficulty of black box testing and concurrency problems.
+
+
+##Massif
+- When the tool was added as an option to Valgrind
+- Description of the tool: it’s purpose, what it does, how it works (kinda), etc.
+- Options that can be run with each tool
+- Known issues for specific tools
+- Example code + output
+
+
+##Callgrind
+- When the tool was added as an option to Valgrind
+- Description of the tool: it’s purpose, what it does, how it works (kinda), etc.
+- Options that can be run with each tool
+- Known issues for specific tools
+- Example code + output

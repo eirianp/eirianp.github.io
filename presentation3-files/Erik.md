@@ -22,7 +22,9 @@ January 2004: Valgrind won a merit (bronze) Open Source Award.
 
 *Projects using or have used Valgrind* found here: http://valgrind.org/gallery/users.html
 
-*Something to know* Valgrind is not just a leak checker, it can help find latent bugs even when they don't cause your program to fail or crach -> refers to the difficulty of black box testing and concurrency problems.
+*Something to know* Valgrind is not just a leak checker, it can help find latent bugs even when they don't cause your program to fail or crash -> refers to the difficulty of black box testing and concurrency problems.
+Adding compiler flags will help with debugging with Valgrind because Valgrind will have more information to tell you. 
+-pedantic -Wall -Wextra
 
 
 ##Massif
@@ -39,3 +41,13 @@ January 2004: Valgrind won a merit (bronze) Open Source Award.
 - Options that can be run with each tool
 - Known issues for specific tools
 - Example code + output
+
+
+##Conclusion??
+Valgrind is much more than a leak checking tool. Change your perspective: Valgrind is an undefined behavior killer.
+
+Valgrind should be your tool of *first* resort. It not only tells you where your bugs are happening, but why, and it'll tell you this even if your program doesn't crash (unlike GDB on both counts). For what it's worth, GDB is still a very useful tool for getting full stack traces on failed assertions and for debugging concurrent code, among other things.
+
+You may also find it useful to always compile with -pedantic -Wall -Wextra. Your compiler is often smart enough to flag undefined behavior as well. What the compiler misses, Valgrind should catch.
+
+pulled from **http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker**

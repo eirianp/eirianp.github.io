@@ -1,0 +1,32 @@
+Eirian to do memcheck and cachegrind
+
+What is Valgrind?
+
+- Valgrind itself is a framework for creating dynamic analysis tools 
+	- originally designed to be a memory debugging tool on Linux for the x86
+	- but has morphed into a generic framework
+	- https://en.wikipedia.org/wiki/Valgrind
+- Valgrind currently includes 6 production quality tools:
+	- a memory error detector “memcheck”
+		- this runs by default if you don’t give a —-tool=foo option
+	- TWO thread error detectors, “helgrind” and “DRD”
+	- a call-graph generating cache and branch prediction profiler “Callgrind”
+	- a cache and branch prediction profiler “Cachegrind”
+	- a heap profiler “Massif”
+- License
+	- GNU GPL v2
+	- free and open source
+		- “ Free-as-in-speech: you can download it, read the source code, make modifications, and pass them on, all within the limits of the GNU GPL”
+		- “ free-as-in-beer: we aren't charging for it.”
+	- this makes it easy to create projects based on Valgrind
+		- Google’s ThreadSanitizer is based on Valgrind for Linux/OS X versions
+		- ThreadSanitizer is similar to Helgrind (more on Helgrind later)!
+	- source: https://code.google.com/p/data-race-test/wiki/ThreadSanitizer
+
+- Trivia
+	- “Valgrind” is the entrance to Valhalla in Norse mythology.
+	- Pronounced “val - grinned”
+	- Not “value grinder,” but the authors say “that’s not a bad guess.”
+
+
+What are debugging tools and why are they useful?

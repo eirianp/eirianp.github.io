@@ -30,3 +30,20 @@ What is Valgrind?
 
 
 What are debugging tools and why are they useful?
+	- look in A&E textbook and fill out
+
+
+When and why we use Valgrind
+	- Why — Debugging!
+		- Help tracking down defects
+			- developer knows a problem exists, but doesn’t know the root cause
+		- Expose latent defects
+		- Detect memory leaks early
+		- ROI — it is much cheaper to find and fix defects early in the development process
+	- When
+		- Valgrind as a tool of first resort
+	- http://valgrind.org/info/
+
+
+Example .valgrindrc file
+	- foo bar

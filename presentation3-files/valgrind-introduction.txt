@@ -2,6 +2,8 @@ Eirian to do memcheck and cachegrind
 
 What is Valgrind?
 
+- documentation is fantastic. We were hard-pressed to find sources besides the valgrind manual
+
 - Valgrind itself is a framework for creating dynamic analysis tools 
 	- originally designed to be a memory debugging tool on Linux for the x86
 	- but has morphed into a generic framework
@@ -47,3 +49,92 @@ When and why we use Valgrind
 
 Example .valgrindrc file
 	- foo bar
+
+
+Summary
+concurrency, black box testing, should be first use when going through code
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+Cachegrind:
+    - "a cache and branch-prediction profiler"
+	- unlike valgrind, compiler optimisation should be on, compile with -g flag
+		- this is optional but recommended
+	$ valgrind --tool=cachegrind [your prog]
+		- it will tell you cache misses and more
+		- I have never used cachegrind
+		- see http://valgrind.org/docs/manual/cg-manual.html
+
+The Cache:
+	- modern CPUs have different levels in the cache. 
+	- an L1 (level 1) cache is checked first and is the fastest
+	- an L2 cache is checked next and is the next fastest cached
+	- etcetera 
+	- an L1 miss costs ~10 CPU cycles, an L2 miss costs up to 200 cycles
+	- a mis-predicted branch can cost between 10-30 cycles.
+	
+	- after checking the cache, look in external memory
+	- "LL" means last level, or the slowest cache.
+
+	- some terminology...
+		- I1 -- instruction cache level 1
+		- D1 -- data cache level 1
+
+	- sources:
+		- https://en.wikipedia.org/wiki/CPU_cache#Multi-level_caches
+		- https://courses.cs.washington.edu/courses/cse326/05wi/valgrind-doc/cg_main.html
+		- http://valgrind.org/docs/manual/cg-manual.html
+
+Cachegrind terminology:
+	- "Ir" -- I cache reads, the number of instructions executed
+	- "I1mr" -- I1 cache read misses
+	- "ILmr" -- LL cache instruction read misses
+	- "Dr" -- D cache reads, the total number of memory reads
+	- "D1mr" -- D1 cache read misses
+	- "DLmr" -- LL cache data read misses
+	- "Dw" -- D cache writes, the number of memory writes
+	- "D1mw" --  D1 cache write misses
+	- "DLmw" -- LL cache data write misses
+	- "Bc" -- Conditional branches executed
+	- "Bcm" -- conditional branches mispredicted
+	- "Bi" -- Indirect branches executed
+	- "Bim" -- indirect branches mispredicted
+	- "Note that D1 total accesses is given by D1mr + D1mw, and that LL total accesses is given by ILmr + DLmr + DLmw."
+	- "These statistics are presented for the entire program and for each function in the program. You can also annotate each line of source code in the program with the counts that were caused directly by it."
+	- http://valgrind.org/docs/manual/cg-manual.html
+
+Cachegrind
+	- a cache-miss profiler
+	- optimisation should be turned on, unlike with other Valgrind tools
+		- we want good data for cache misses
+	- but, compile using the -g flag for better output
+	- Cachegrind will simulate the cache. It picks a configuration based on CPUID
+		- but, you can specify the settings for I1, D1, and LL cache manually
+	"References that straddle two cache lines are treated as follows:
+		If both blocks hit --> counted as one hit
+		If one block hits, the other misses --> counted as one miss"
+	"Instructions that modify a memory location (eg. inc and dec) are counted as doing just a read, ie. a single data reference. This may seem strange, but since the write can never cause a miss (the read guarantees the block is in the cache) it's not very interesting."
+
+	"Cachegrind simulates how your program interacts with a machine's cache hierarchy and (optionally) branch predictor. It simulates a machine with independent first-level instruction and data caches (I1 and D1), backed by a unified second-level cache (L2). This exactly matches the configuration of many modern machines.
+
+	However, some modern machines have three or four levels of cache. For these machines (in the cases where Cachegrind can auto-detect the cache configuration) Cachegrind simulates the first-level and last-level caches. The reason for this choice is that the last-level cache has the most influence on runtime, as it masks accesses to main memory. Furthermore, the L1 caches often have low associativity, so simulating them can detect cases where the code interacts badly with this cache (eg. traversing a matrix column-wise with the row length being a power of 2)."
+
+	"Also, since one instruction cache read is performed per instruction executed, you can find out how many instructions are executed per line, which can be useful for traditional profiling."
+
+
+	- https://courses.cs.washington.edu/courses/cse326/05wi/valgrind-doc/cg_main.html
+	- http://valgrind.org/docs/manual/cg-manual.html
+
+
+	- run: 
+		eiriano> valgrind --tool=cachegrind ls -l
+	- this generated the file:
+		cachegrind.out.8561 
+		- a file is generated each time you run cachegrind.
+		- it's human readable, but it's easier to interpret using cg_annotate.
+	- use cg_annotate:
+		eiriano> cg_annotate cachegrind.out.8561 
+		- you can use cg_merge to combine runs or cg_diff to find differences between runs
+		- cg_foo are tools provided by Valgrind

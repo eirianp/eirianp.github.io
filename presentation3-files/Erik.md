@@ -28,11 +28,50 @@ Adding compiler flags will help with debugging with Valgrind because Valgrind wi
 
 
 ##Massif
-- When the tool was added as an option to Valgrind
+- When the tool was added as an option to Valgrind (?)
 - Description of the tool: it’s purpose, what it does, how it works (kinda), etc.
-- Options that can be run with each tool
+	Massif is a heap profiler. It performs detailed heap profiling by taking refular snapshots of a program's heap. It produces a graph showing heap usage over time, including information about which parts of the program are responsible for the most memory allocations. The graph is supplemented by a text or HTML file that includes more information for determing where the most memory is being allocated. Massif runs programs about 20x slower than normal
+	On modern machines with virtual memory, Massif can speed up the program -- interact better with machine's caches and avoid paging, it will help reduece the chance that it exhausts your machine's swap space. Massif c an identify leaks that aren't actually lost, pointers remain to it, but they are no longer in use. Traditional memcheck's may not find these leaks, but Massif can. 
+- Options that can be run with each tool.
+	When compiling, must use the **-g** flag. to run, **valgrind --tool=massif**. To see the information gathered by Massif in an easy to read form, use ms_print <filename>
+	--time-unit=B option to specity that we want the time unit to instead be the number of bytes allocated/deallocated on the heap and stack(s).
+	Maximum number of snapshots is 100, although, can change this using --max-snapshots. --detailed-freq option changes how often a detail snapshot is taken (default is everything 10th.)
 - Known issues for specific tools
-- Example code + output
+	Massif's determination of when the peak occured can be wrong, for two reasons, Peak snapshots are only ever taken after a deallocation happens. This avoids lots of unnecessary peak snapshot recordings (imagine what happens if your program allocates a lot of heap blocks in succession, hitting a new peak every time). But it means that if your program never deallocates any blocks, no peak will be recorded. It also means that if your program does deallocate blocks but later allocates to a higher peak without subsequently deallocating, the reported peak will be too low.
+	Even with this behavior, recording the peak accureately is slow. So by default Massif records a peak whose size is within 1% of the size of the true peak. This unaacuracy in the peak measurement can be changed with the --peak-inaccuracy option.
+	If the program forks, the child will inherit all the profiling data that has been gathered for the parent. If the output file format string does not contain %p, then the outputs from the parent and child will be intermingled in a single output file, which will almost certainly make it unreadable by ms_print
+
+	By default, massif measures only heap memory. If you wish to measure all the memory used by your program, you can use the --pages-as-heap=yes
+	command-line options:
+		--heap=<yes|no> default: yes
+			Specifies whether heap profiling should be done
+		--heap-admin=<size> default: 8
+			if heap profiling is enabled, gives the number of admin bytes per block to use. This should be an estimate of the average, since it may vary.
+		--stacks=<yes|no> default: no
+			Specifies whether stack profiling should be done. This option slows Massif down greatly and so is off by default
+		--pages-as-heap=<yes|no> defailt: no
+			Tells Massif to profile memory at the page level rather than at the malloc's block level
+		--depth=<number> default: 30
+			Maximum depth of the allocation trees recorded for detailed snapshots. increasing it will make Massif run somewhat more slowly, use more memory, and produce bigger output files
+		--alloc-fn=<name>
+			functions specified with this option will be treated though they were heap allocation function such as malloc. This is usefull for functions that are wrappers to malloc or new, which can fill up the allocation trees with uninteresting information
+			Note: C++ names are demangled. Note also that overloaded C++ names must be written in full. Single quotes may be necessary to prevent the shell from breaking them up
+		--ignore-fn=<name>
+			Any direct heap allocation  that occurs in a function specified by this option will be ignored. This is mostly useful for resting purposes.
+		--threshold=<m.n> default: 1.0
+			The significance threshold for heap allocations, as percentage of total memory size
+		--peak-inaccuracy=<m.n> default: 1.0
+			Massif does not necessarily record the actual global memory allocation peak.
+		--time-unit=<i|ms|B> default: i
+			The time unit used for the profiling. There are three possibilities: instructions executed (i), real wall clock (ms, milliseconds), and bytes allocated (B)
+		--detailed-freq=<n> default: 10
+			Frequency of detailed snapshots
+		--max-snapshots=<n> default: 100
+			The maximum number of snapshots recorded
+		--massif-out-file=<file> default: massif.out.%p
+			Write the profile data to file rather than to the default output file, massif.out.<pid>
+
+- Example code + output (?)
 
 
 ##Callgrind

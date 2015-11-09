@@ -233,8 +233,14 @@ Valgrind is much more than a leak checking tool. Change your perspective: Valgri
 
 Valgrind should be your tool of *first* resort. It not only tells you where your bugs are happening, but why, and it'll tell you this even if your program doesn't crash (unlike GDB on both counts). For what it's worth, GDB is still a very useful tool for getting full stack traces on failed assertions and for debugging concurrent code, among other things.
 
-You may also find it useful to always compile with -pedantic -Wall -Wextra. Your compiler is often smart enough to flag undefined behavior as well. What the compiler misses, Valgrind should catch.
+You may also find it useful to always compile with -g -pedantic -Wall -Wextra. Your compiler is often smart enough to flag undefined behavior as well. What the compiler misses, Valgrind should catch.
 
-pulled from **http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker**
+Valgrind is a great tool for handling accidental difficulties when optimizating code for speed and memory. Accidental difficulties are difficulties that develop during the production process, and valgrind is a tool meant to be used during code production to identify bugs, memory leaks, call costs, etc, which can be fixed for a much more optimized program.
 
-All information pulled from the valgrind manuals: http://valgrind.org/docs/manual/cl-manual.html
+For a list of projects that use or have used Valgrind please refer to the list found here: **http://valgrind.org/gallery/users.html**
+
+
+
+##References
+All information pulled from the valgrind manuals: http://valgrind.org/docs/manual/
+Conclusion pulled from **http://maintainablecode.logdown.com/posts/245425-valgrind-is-not-a-leak-checker**

@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Unit Testing in C++, an Overview</title>
+		<title>Dive into Valgrind</title>
 
 		<meta name="description" content="Presentation 3 for CSCI 5828">
 		<meta name="author" content="Eirian O Perkins, Erik Eakins, and Amber Womack">
@@ -14,7 +14,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+		<link rel="stylesheet" href="css/theme/beige.css" id="theme">
 
 		<!-- Code syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -41,18 +41,112 @@
 			<!-- Any section element inside of this container is displayed as a slide -->
 			<div class="slides">
 				<section>
-					<h2>Foo</h2>
-					<h4><font color=47D1D1>Authors</font></h4>
+					<h2>Dive into Valgrind</h2>
+					<img src="presentation3-files/images/valgrind1.png">
+					<h4><font color=47D1D1>Eirian Perkins, Amber Womack, and Erik Eakins</font></h4>
 					<p>
 						CSCI 5828 - Presentation 3
 					</p>
 				</section>
 
+				<section>
+					<h2>Table of Contents</h2>
+					<ol>
+					<li>Introduction and Motivation</li>
+					<li>Background and Trivia</li>
+					<li>What is Valgrind</li>
+					<li>Production-Quality Tools included</li>
+					<li>foo</li>
+					<li>bar</li>
+					</ol>
+				</section>
+
+				<section>
+					<h2>Introduction and Motivation</h2>
+					<ul>
+					<li>Valgrind was originally developed to be a Linux memory debugging tool on the x86</li>
+					<li>However, Valgrind has morphed into a <i>generic framework</i> for creating dynamic analysis tools<small>[1]</small></li>
+					<li>Valgrind includes 6 "production quality" tools; we will discuss each of these in turn</li>
+					<li>Preview of topics:</li>
+					<ul>
+						<li>Memory error checker</li>
+						<li>Thread error detectors</li>
+						<li>Cache and branch prediction profilers (with/without graph generator)</li>
+						<li>Heap profiler</li>
+					</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Background and Trivia</h2>
+					<img src="presentation3-files/images/valhalla.jpg", height=400>
+					<ul>
+					<li>In Norse mythology, "Valgrind" is the entry gate to Valhalla</li>
+					<li>"Valgrind" is pronounced "val-grinned"</li>
+					<li>...although "val-grind" is a good guess</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Background and Trivia</h2>
+					<ul>
+					<li>Valgrind's documentation is phenomenal</li>
+					<li>We were hard-pressed to find any better sources</li>
+					<li>Complete, clear, and filled with examples</li>
+					<li>Based on experience with our previous presentations, this is a big deal.</li>
+					<li><a href="http://valgrind.org">Check out their webpage!</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Background and Trivia</h2>
+					<ul>
+					<li>Developers from all over the world collaborate on Valgrind</li>
+					<li>The list of developers <a href="http://valgrind.org/info/developers.html">may be found here</a></li>
+					<li>Want to join? <a href="https://lists.sourceforge.net/lists/listinfo/valgrind-developers">make a request here</a></li>
+					<li>Valgrind works on Linux, Solaris, Android,  and OS X</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Production-Quality Tools included</h2>
+					<ul>We will be discussing the following:
+					<li>Memcheck, a memory error checker</li>
+					<ul>
+						<li>this runs by default if you do not specify a tool</li>
+					</ul>
+					<li>Helgrind and DRD, two thread error detectors</li>
+					<li>Callgrind -- cache/branch prediction profiler that generates call graphs</li>
+					<li>Cachegrind -- a cache and branch prediction profiler</li>
+					<ul>
+						<li>Valgrind simulates the cache. If it does not have a cache profile, you can adjust the settings</li>
+					</ul>
+					<li>Massif, a heap profiler</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is Valgrind?</h2>
+					<ul>
+					<li>Valgrind is essentially a "just in time" compiler on a virtual machine</li>
+					<li>Valgrind simulates the CPU and cache, for example</li>
+					<li>...and can inject code to determine memory leaks (more on this later)</li>
+					<li>An "intermediate representation" (IR) will be generated from the original program <small>[1]</small></li>
+					<ul>
+						<li>The IR is SSA-based and processor neutral</li>
+					</ul>
+					<li>The running Valgrind tool will do some transformation on the IR and convert it back to machine code</li>
+					<li>This is why code runs 10-50x slower through Valgrind</li>
+					<ul>
+						<li>The null tool simply converts code to IR and back again</li>
+					</ul>
+					</ul>
+				</section>
 
 				<section>
 					<h2>Thank you!</h2>
+					<li></li>
 				</section>
-
 
 
 

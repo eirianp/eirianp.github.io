@@ -42,7 +42,7 @@ How to run
 		- be careful to put program options in the correct place
 	- usually I juse memcheck, which is the default tool
 		- you can specify the tool with --tool=[option]
-		-
+ii		-
 	- you can set default options in ~/.valgrindrc
 	- you can run GDB through valgrind
 		- take a look at http://valgrind.org/docs/manual/manual-core-adv.html

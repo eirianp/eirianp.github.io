@@ -55,9 +55,13 @@
 					<li>Introduction and Motivation</li>
 					<li>Background and Trivia</li>
 					<li>What is Valgrind</li>
-					<li>Production-Quality Tools included</li>
-					<li>foo</li>
-					<li>bar</li>
+					<li>Production-Quality Tools Included</li>
+					<li>When Where and Why Valgrind?</li>
+					<li>Memcheck: The Default Tool</li>
+					<li>Helgrind: A Thread Error Detector</li>
+					<li></li>
+					<li></li>
+					<li></li>
 					</ol>
 				</section>
 
@@ -144,10 +148,230 @@
 				</section>
 
 				<section>
-					<h2>Thank you!</h2>
-					<li></li>
+					<h2>When Where and Why Valgrind?</h2>
+					<ul>
+					<li>Detecting Errors Early: A business case<small>[3, 4]</small></li>
+					<ul>
+						<li>Avoid damage to the company's reputation</li>
+						<li>Boost product sales</li>
+						<li>Customer and consumer confidence</li>
+						<li>Catching errors late in the development cycle (or after release) has a "cascading impact" on time and money spent</li>
+						<li>A fix can be <i>orders of magnitude</i> more expensive if caught late</li>
+					</ul>
+					<li><font color=47D1D1>Don't drive business to your competitors!!!</font></li>
+					</ul>
 				</section>
 
+				<section>
+					<h2>When Where and Why Valgrind?</h2>
+					<ul>
+					<li>Valgrind is everywhere</li>
+					<ul>
+						<li>Office Software -- OpenOffice</li>
+						<li>Web Browsers -- Mozilla</li>
+						<li>Databases -- MySQL</li>
+						<li>Scientific -- R</li>
+						<li>Graphics -- RenderMan, GIMP, and Blender</li>
+						<li>Programming language implementations -- Python, LLVM compiler</li>
+						<li>Libraries -- Boost</li>
+						<li>Games -- Unreal Tournament</li>
+					</ul>
+					<li><a href="http://valgrind.org/gallery/users.html">See the complete list here</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>When Where and Why Valgrind?</h2>
+					<ul>
+					<li><a href="http://valgrind.org/gallery/awards.html">Awards </a></li>
+					<ul>
+						<li>January 2004: Winner of a bronze Open Source Award</li>
+						<li>July 2006: Julian Seward awarded with the Google-O'Reilly "Best Toolmaker" Open Source Award for his contributions to Valgrind</li>
+						<li>May 2008: Winner of the TrollTech Qt Open Source Development Award for the best open source development tool</li>
+					</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Memcheck -- The Default Tool</h2>
+					<ul>
+					<li>Memcheck is a "memory error detector"</li>
+					<ul>
+						<li>accessing freed memory</li>
+						<li>overruning heap blocks, top of stack</li>
+						<li>usining uninitialized values</li>
+						<li>incorrect heap memory freeing</li>
+						<li>memory leaks</li>
+					</ul>
+					<li>When I think Valgrind, I think Memcheck</li>
+					<li>If no tool is specified, memcheck is selected</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Memcheck -- The Default Tool</h2>
+					<ul>
+					<li>How to run memcheck?</li>
+					 <code><pre style="font-size:12px">$ valgrind [valgrind-options] &lt;your prog here&gt; [prog options]
+		or
+$ valgrind --tool=memcheck [valgrind-options] &lt;your prog here&gt; [prog options]</code></pre>
+					<li>Helpful options:</li>
+						<code><pre style="font-size:12px">--track-origins=yes		# track origins of uninitialized values; will not do this by default
+--leak-check=yes		# Enables detailed leak detector. Recommendation: run first without this option, 
+				# it can be verbose. leak-check can be set to any of {no, summary, yes, full}
+-v				# Verbose. Get more information.											</code></pre>
+					<li>Tracking children and more:</li>
+						<code><pre style="font-size:12px">--trace-children=yes		# follow child processes (for example, exec* family of functions)
+--child-silent-after-fork=yes	# suppress output from a forked process
+--tracking fds=yes		# track open file descriptors										</code></pre>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Memcheck -- How to run</h2>
+					<ul>
+					<li>No need to recompile, just pass in a binary (and any associated arguments)</li>
+					<li>Valgrind will demangle C++ names and attempt to give line numbers. If there are no line numbers, try recompiling with the debug flag set (-g for C/C++ fans)</li>
+					<li>Memcheck is typically user friendly. Output is fairly self-explanatory</li>
+					<li>Memcheck gives suggestions at the end of its output</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/didntfree1.png", height=200>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/didntfree2.png">
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/freetoomany1.png", height=200>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/freetoomany2.png">
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/invalidread1.png", height=300>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/invalidread2.png">
+				</section>
+
+				<!-- mixed malloc/delete doesn't work on my mac... maybe clang is too good -->
+				<!--section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/mixedmalloc1.png", height=200>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/mixedmalloc2.png">
+				</section-->
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/uninit1.png", height=200>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Quick examples</h2>
+					<img src="presentation3-files/images/uninit2.png", height=450>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Decoding error messages</h2>
+					<ul>
+					<li>"Invalid read of size x"</li>
+						<ul><li>illegal read from invalid stack address or invalid heap block</li></ul>
+					<li>"Conditional jump or move depends on uninitialised value(s)"</li>
+						<ul><li>you tested against an uninitialized value</li></ul>
+					<li>"Invalid free()"</li>
+						<ul><li>illegal free, maybe you freed the same block twice</li></ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Decoding error messages</h2>
+					<ul>
+					<li>"Mismatched free() / delete / delete []"</li>
+						<ul><li>you mixed "new" with "free" or "malloc" with "delete." This is wrong.</li></ul>
+						<ul><li>the difference: "new" and "delete" call constructor and destructor, respectively. It will probably work on Linux, but it won't be portable. We were not able to repro this on OS X, maybe clang++ is too smart for us</li></ul>
+					<li>"Source and destination overlap in memcpy(0xbffff294, 0xbffff280, 21)"</li>
+						<ul><li>memory overlap, perhaps when copy from src to dst (src and dst point to some same memory between them). This behavior is undefined</li></ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Memcheck -- Known issues</h2>
+					<ul>
+					<li>"My program uses the C++ STL and string classes. Valgrind reports 'still reachable' memory leaks involving these classes at the exit of the program, but there should be none."</li>
+						<ul><li>probably an implementation of C++ std lib is uses its own memory pool allocator. Don't worry about this.</li></ul>
+					<li>Valgrind crashes</li>
+						<ul><li>it's possible bad code you are testing overwrote valgrind's memory checker</li></ul>
+						<ul><li>your program could have jumped to a non-code address, or valgrind doesn't handle that CPU instruction. If this is the case, file a bug report.</li></ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Helgrind: A Thread Error Detector</h2>
+					<ul>
+					<li>Helps discover and resolve race conditions, inconsistent lock ordering, misuse of POSIX threads, and more</li>
+					<li>Use</li>  <code><pre> $ valgrind --tool=helgrind</pre></code>
+					<li>Intended for C, C++, and Fortran</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Helgrind: Effective Use Stragegy</h2>
+					<ul>
+					<li>Write threaded programs from the beginning that allow Helgrind to verify its correctness </li>
+					<li>Use a Linux distribution</li>
+					<li>Use POSIX threading primitives</li>
+					<li>Avoid memory recycling and POSIX condition variables</li>
+					<li>Use pthread_join on finishing threads</li>
+					<li>performing Helgrind, which is thread debugging, and Memcheck, which is memory debugging at the same time</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Helgrind: Example</h2>
+					<ul>
+					<li>Let's consider a race condition</li>
+					<li>May occurr when there are multiple threads running at the same time that try to access shared memory</li>
+					<li>Due to the thread scheduling algorithm, its difficult to know which thread will attempt to access the shared region, since the threads can swap at any time</li>
+					<li>For these cases, locking or synchronizing can help prevent these issues</li>
+					<li>Let's take a look...</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Helgrind: Example</h2>
+					<img src="presentation3-files/images/helgrind1.png", height=450>
+				</section>
+
+				<section>
+					<h2>Helgrind: Example</h2>
+					<img src="presentation3-files/images/helgrind2.png", height=500>
+				</section>
+
+
+				<section>
+					<h2>Memcheck -- The Default Tool</h2>
+					<ul>
+					<li></li>
+					</ul>
+				</section>
 
 
 

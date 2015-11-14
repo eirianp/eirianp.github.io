@@ -1,5 +1,3 @@
-// try this with/without debug option (-g)
-// need this for line numbers
 #include <stdio.h>
 #include <iostream>
 

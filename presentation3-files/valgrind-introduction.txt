@@ -138,3 +138,7 @@ Cachegrind
 		eiriano> cg_annotate cachegrind.out.8561 
 		- you can use cg_merge to combine runs or cg_diff to find differences between runs
 		- cg_foo are tools provided by Valgrind
+
+		- The option --auto=yes further breaks down the results by reporting counts for each C statement (without the auto option, you get counts summarized at the function level, which is often too coarse to be useful).
+		- http://web.stanford.edu/class/cs107/guide_callgrind.html
+			- except this isn't callgrind, it's cachegrind.........

@@ -59,9 +59,12 @@
 					<li>When Where and Why Valgrind?</li>
 					<li>Memcheck: The Default Tool</li>
 					<li>Helgrind: A Thread Error Detector</li>
-					<li></li>
-					<li></li>
-					<li></li>
+					<li>DRD: A Thread Error Detector</li>
+					<li>Cachegrind: A Cache and Branch Prediction Profiler</li>
+						<ul><li>Interlude into the Cache</li></ul>
+					<li>Callgrind: a Call-Graph Generating Cache and Branch Prediction Profiler</li>
+					<li>Massif: a Heap Profiler</li>
+					<li>Conclusion</li>
 					</ol>
 				</section>
 
@@ -327,7 +330,7 @@ $ valgrind --tool=memcheck [valgrind-options] &lt;your prog here&gt; [prog optio
 					<h2>Helgrind: A Thread Error Detector</h2>
 					<ul>
 					<li>Helps discover and resolve race conditions, inconsistent lock ordering, misuse of POSIX threads, and more</li>
-					<li>Use</li>  <code><pre> $ valgrind --tool=helgrind</pre></code>
+					<li>Use</li>  <code><pre> $ valgrind --tool=helgrind</code></pre>
 					<li>Intended for C, C++, and Fortran</li>
 					</ul>
 				</section>
@@ -365,13 +368,345 @@ $ valgrind --tool=memcheck [valgrind-options] &lt;your prog here&gt; [prog optio
 					<img src="presentation3-files/images/helgrind2.png", height=500>
 				</section>
 
+				<section>
+					<h2>Helgrind: Wrap-up</h2>
+<code><pre>--ignore-thread-creation=<yes|no> [default: no]</code></pre>
+						<ul><li>This will allow control for whether all activities during the thread creation should be ignored or not. </li></ul>
+<code><pre>--check-stack-refs=no|yes [default: yes]</code></pre>
+						<ul><li> Since Helgrind checks all data memory accesses your program makes, this flag allows you to skip the check for accesses to the thread stack.</li></ul>
+				</section>
 
 				<section>
-					<h2>Memcheck -- The Default Tool</h2>
+					<h2>Helgrind: Wrap-up</h2>
+<code><pre>--free-is-write=no|yes [default: no]</code></pre>
+					<ul><li>If this is enabled, Helgrind will treat the freeing of heap memory the same as if the memory was written immediately before the free.</li></ul>
+<code><pre>--track-lockorders=no|yes [default: yes]</code></pre>
+					<ul><li>If this is enabled, Helgrind will perform lock order consistency checking.</li></ul>
+				</section>
+
+				<section>
+					<h2>DRD: A Thread Error Detector</h2>
 					<ul>
-					<li></li>
+					DRD is another valgrind tool used to for detecting errors. This one focuses on the errors within multithreaded programs for C/C++ that uses POSIX threading primitives. It is helpful for Data races, lock contention, improper use of POSIX threads API, deadlocks, and false sharing. It will print a message when it finds one of these errors. 
 					</ul>
 				</section>
+
+
+				<section>
+					<h2>DRD -- Effective use</h2>
+					<ul>
+					<li>debug information needs to be present in the executable</li>
+					<li>to reduce the amount of generated code, compile with –O1 option</li>
+					<li>install the debug packages for the linux distribution libraries</li>
+					<li>Do not send output from more than one thread to std::cout</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>DRD: Example</h2>
+					<img src="presentation3-files/images/drd1.png" height=300>
+				</section>
+
+				<section>
+					<h2>DRD: Example</h2>
+					<img src="presentation3-files/images/drd2.png">
+				</section>
+
+				<section>
+					<h2>DRD: Wrap-up</h2>
+<code><pre>--show-stack-usage=<yes|no> [default: no]</code></pre>
+						<ul><li>This will print the known stack usage at the exit time of the thread.</li></ul>
+<code><pre>--show-confl-seg=<yes|no> [default: yes]</code></pre>
+						<ul><li> This will show the conflicting segments contained in the race reports.</li></ul>
+				</section>
+
+				<section>
+					<h2>DRD: Wrap-up</h2>
+<code><pre>--shared-threshold=<n> [default: off]</code></pre>
+						<ul><li> It also can print an error message if a reader lock is held longer than the allotted time.</li></ul>
+<code><pre>--check-stack-var=<yes|no> [default: no]</code></pre>
+						<ul><li> Helps controls if DRD detected data races on stack variables..</li></ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind: A Cache and Branch Prediction Profiler</h2>
+					<ul>
+					<li>Cachegrind is a cache-miss profiler</li>
+					<li>Unlike the previous tools we have seen, compiler optimisation should be enabled, and compiling should be done with the  -g flag</li>
+					<li>Why turn on optimisation? We want data on cache misses that resemble reality</li>
+					<li>Like memcheck, that simulated the CPU, Cachegrind simulates the cache</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind: A Cache and Branch Prediction Profiler</h2>
+					<ul>
+					<li>The first and last level caches are simulated. Why not more? The last level cache has the most impact on runtime performance, while simulating the first level can detect cases where code interacts badly with the cache</li>
+					<li>The Cachegrind tool will automatically detect cache settings and run based on a pre-specificied configuration which is based on the CPUID. If no configuration can be found, the user must specify reasonable values.</li>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Interlude into the Cache</h2>
+					<ul>
+					<li>Modern CPUs have different levels in the cache</li>
+					<li>an L1 (level 1) cache is checked first and is the fastest</li>
+					<li>an L2 cache is checked next and is the next fastest cached</li>
+					<li>an L1 miss costs ~10 CPU cycles, an L2 miss costs up to 200 cycles</li>
+					<li>a mis-predicted branch can cost between 10-30 cycles.</li>
+					<li>after checking the cache, look in external memory</li>
+					<li>"LL" means last level, or the slowest cache.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Terminology</h2>
+					<ul style="font-size:30px">
+					<li>"Ir" -- I cache reads, the number of instructions executed</li>
+					<li>"I1mr" -- I1 cache read misses</li>
+					<li>"ILmr" -- LL cache instruction read misses</li>
+					<li>"Dr" -- D cache reads, the total number of memory reads</li>
+					<li>"D1mr" -- D1 cache read misses</li>
+					<li>"DLmr" -- LL cache data read misses</li>
+					<li>"Dw" -- D cache writes, the number of memory writes</li>
+					<li>"D1mw" --  D1 cache write misses</li>
+					<li>"DLmw" -- LL cache data write misses</li>
+					<li>"Bc" -- Conditional branches executed</li>
+					<li>"Bcm" -- conditional branches mispredicted</li>
+					<li>"Bi" -- Indirect branches executed</li>
+					<li>"Bim" -- indirect branches mispredicted</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind</h2>
+					<ul style="font-size:35px">
+					<li>"Note that D1 total accesses is given by D1mr + D1mw, and that LL total accesses is given by ILmr + DLmr + DLmw."</li>
+					<li>These statistics (see previous slide) will be shown for the entire program and for each function in the program. This behavior may be changed, <a href="http://valgrind.org/docs/manual/cg-manual.html"> see the manual for details</a></li>
+					<li>What if a reference "straddles" two cache lines?</li>
+						<ul><li>both hit -&gt; counts as one hit</li></ul>
+						<ul><li>one hit, one miss -&gt; counts as one miss</li></ul>
+					<li>"Instructions that modify a memory location" count as a single read operation. Why? Writes never miss</li>
+					<li>Branch prediction may be enabled with a command line argument</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Running Cachegrind</h2>
+					<code><pre>valgrind --tool=cachegrind prog</code></pre>
+					<ul>
+					<li>This generages a file, <code>cachegrind.out.&lt;pid&gt;</code> each time the program is run</li>
+					<li>Appending the PID will <i>probably</i> avoid clobbering the file if Cachegrind is run again in the same directory</li>
+					<li>Appending the PID also enables data to be collected on children processes, which will also generate a new file</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Running Cachegrind</h2>
+					<ul>
+					<li>The generated files are human readable, but it's easier to interpret them using cg_annotate.</li>
+<code><pre>eiriano> cg_annotate cachegrind.out.8561</code></pre>
+					<li>you can use cg_merge to combine runs or cg_diff to find differences between runs</li>
+					<li>cg_<i>foo</i> are tools provided by Valgrind</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Example</h2>
+					<ul>
+					<li>Let's consider Cachegrind's output only. Reading the output is the hardest part.</li>
+					<li>Using Cachegrind and Callgrind require a working knowledge of the CPU and cache</li>
+					<li><a href="http://www.akkadia.org/drepper/cpumemory.pdf">a primer is available here</a></li>
+					<li>Let's look at some output....</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Example</h2>
+					Output from running <code><pre>valgrind --tool=cachegrind prog</code></pre>
+					<img src="presentation3-files/images/cachegrind1.png">
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Example</h2>
+					<ul>
+					Output from running <code><pre>cg_annotate cachegrind.out.pid</code></pre>
+					This preamble is a summary of configuration options. Is your configuration correct?
+					</ul>
+					<img src="presentation3-files/images/cachegrind2.png">
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Example</h2>
+					<ul>
+					Output from running <code><pre>cg_annotate cachegrind.out.pid</code></pre>
+					Next we see a summary of running the entire program
+					</ul>
+					<img src="presentation3-files/images/cachegrind3.png">
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Example</h2>
+					<ul>
+					Output from running <code><pre>cg_annotate cachegrind.out.pid</code></pre>
+					And last is a summary of each function call 
+					</ul>
+					<img src="presentation3-files/images/cachegrind4.png", height=350>
+				</section>
+
+				<section>
+					<h2>Cachegrind -- Wrap-up</h2>
+					<ul>
+					<li>The previous tools we have seen give helpful hints and tips after running</li>
+					<li>Cachegrind is different. In order to use cachegrind, you must know how to use Cachegrind</li>
+					<li>But, the instructions thus far can give you some intuition on where your program is slowing down</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Callgrind -- Cachegrind++</h2>
+					<ul>
+					<li>Callgrind is a profiling tool that records the call history among functions in a program's run as a call-graph. By default, the collected data consists of the number of instructions executed, their relationship to source lines, the caller/callee relationship between functions, and the numbers of such calls. Optionally, cache simulation and/or branch prediction (similar to cachegrind) can produce further information about the runtime behavior of an application.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Callgrind -- Cachegrind++</h2>
+					<ul>
+					<li>The profile data is written out to a file at program termination. For presentation of the data, and interactive control of the profiling, two command line tools are provided:</li>
+					<li>callgrind_annotate</li>
+					<li>callgrind_control</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Callgrind -- Cachegrind++</h2>
+					<ul style="font-size:35px">
+					<li>callgrind_annotate</li>
+						<ul><li>reads in the profile data, and prints a sorted lists of functions, optionally with source annotation. For graphical visualization of the data, try kcachegrind, which is a KDE/Qt based GUI that makes it easy to navigate the large amount of data that callgrind produces</li></ul>
+					<li>callgrind_control</li>
+						<ul><li>enables you to interactively observe and control the status of a program currently running under callgrind's control, without stopping the program. You can get statistics information as well as the current stack trace, and you can request zeroing of counters or dumping of profile data.</li></ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Callgrind -- Cachegrind++</h2>
+					<ul>
+					<li>Callgrind extends the cachegrind functionality by propagating costs across function call boundaries. If function foo calls bar, the costs from bar are added into foo's costs. When applied to the program as a whole, this builds up a picture of so called inclusive costs, that is, where the cost of each function includes the costs of all functions it called, directly or indirectly.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Callgrind -- Cachegrind++</h2>
+					<ul style="font-size:30px">
+					<li>Options that can be run with each tool</li>
+					<li>Should compile with -g flag for debugging purposes</li>
+<code><pre>valgrind --tool=callgrind [callgrind options] your-program [program options]		</code></pre>
+					<li>This prints the backtrace: <code><pre>callgrind_control -b</code></pre></li>
+					<li>This prints the backtrace with event counts: <code><pre>callgrind_control -e -b</code></pre></li>
+					<li>After terminiation, a profile datafile will be generated callgrind.out.<pid></li>
+					<li>To generate a function by function summary from the profile data file, use: <code><pre>callgrind_annotate [options] callgrind.out.&lt;pid&gt;</code></pre></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- The Heap Profiler</h2>
+					<ul>
+					<li>Massif is a heap profiler. It performs detailed heap profiling by taking refular snapshots of a program's heap. It produces a graph showing heap usage over time, including information about which parts of the program are responsible for the most memory allocations. The graph is supplemented by a text or HTML file that includes more information for determing where the most memory is being allocated. Massif runs programs about 20x slower than normal</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- The Heap Profiler</h2>
+					<ul style="font-size:30px">
+					<li>On modern machines with virtual memory, Massif can speed up the program -- interact better with machine's caches and avoid paging, it will help reduece the chance that it exhausts your machine's swap space. Massif c an identify leaks that aren't actually lost, pointers remain to it, but they are no longer in use. Traditional memcheck's may not find these leaks, but Massif can. </li>
+					<li>When compiling, must use the -g flag. To run: <code><pre>valgrind --tool=massif</code></pre> To see the information gathered by Massif in an easy to read form, use <code><pre>ms_print &lt;filename&gt;</code></pre></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- The Heap Profiler</h2>
+					<ul>
+					<li>Use the --time-unit=B option to specity that we want the time unit to instead be the number of bytes allocated/deallocated on the heap and stack(s).</li>
+					<li>Maximum number of snapshots is 100, although, can change this using --max-snapshots</li>
+					<li>--detailed-freq option changes how often a detail snapshot is taken (default is everything 10th.)</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- Known issues</h2>
+					<ul style="font-size:28px">
+					<li>Massif's determination of when the peak occured can be wrong, for two reasons, Peak snapshots are only ever taken after a deallocation happens. This avoids lots of unnecessary peak snapshot recordings (imagine what happens if your program allocates a lot of heap blocks in succession, hitting a new peak every time). But it means that if your program never deallocates any blocks, no peak will be recorded. It also means that if your program does deallocate blocks but later allocates to a higher peak without subsequently deallocating, the reported peak will be too low.</li>
+					<li>Even with this behavior, recording the peak accureately is slow. So by default Massif records a peak whose size is within 1% of the size of the true peak. This unaacuracy in the peak measurement can be changed with the --peak-inaccuracy option.</li>
+					<li>If the program forks, the child will inherit all the profiling data that has been gathered for the parent. If the output file format string does not contain %p, then the outputs from the parent and child will be intermingled in a single output file, which will almost certainly make it unreadable by ms_print</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- Example</h2>
+					<img src="presentation3-files/images/massif1.png", height=500>
+				</section>
+
+				<section>
+					<h2>Massif -- Example</h2>
+					<ul>
+					Generate a massif.out file<br>
+					<img src="presentation3-files/images/massif2.png"><br>
+					...And run ms_print<br>
+					<img src="presentation3-files/images/massif3.png"><br>
+					Massif also has a typical preamble:<br>
+					<img src="presentation3-files/images/massif4.png"><br>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Massif -- Example</h2>
+					Well, that's not too interesting. What happened? Our program is tiny and has a very short run time.
+					<img src="presentation3-files/images/massif5.png", height=450>
+				</section>
+
+				<section>
+					<h2>Massif -- Example</h2>
+					To get more interesting output, let's use the --time-unit=B option. Repeat the steps above, starting with running <code><pre> valgrind --tool=massif --time-unit=B ./myGreatProg</code></pre>
+					<img src="presentation3-files/images/massif6.png", height=400>
+				</section>
+
+				<section>
+					<h2>Conclusion</h2>
+					<ul>
+					<li>Valgrind is much more than a leak checking tool. Change your perspective: Valgrind is an undefined behavior killer.</li>
+					<li>Valgrind should be your tool of *first* resort. It not only tells you where your bugs are happening, but why, and it'll tell you this even if your program doesn't crash (unlike GDB on both counts). For what it's worth, GDB is still a very useful tool for getting full stack traces on failed assertions and for debugging concurrent code, among other things.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Conclusion</h2>
+					<ul>
+					<li>You may also find it useful to always compile with -g -pedantic -Wall -Wextra. Your compiler is often smart enough to flag undefined behavior as well. What the compiler misses, Valgrind should catch.</li>
+					<li>Valgrind is a great tool for handling accidental difficulties when optimizating code for speed and memory. Accidental difficulties are difficulties that develop during the production process, and valgrind is a tool meant to be used during code production to identify bugs, memory leaks, call costs, etc, which can be fixed for a much more optimized program.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Conclusion</h2>
+					<ul>
+					<li>What are you waiting for? <a href="http://valgrind.org">Check out Valgrind now!</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>References</h2>
+					<ul style="font-size:15px">
+[1] https://en.wikipedia.org/wiki/Valgrind<br>
+[2] http://valgrind.org<br>
+[3] JM Stecklein. Error Cost Escalation Through the Project Life Cycle. June 2004. http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/20100036670.pdf  NASA Johnson Space Center. <br>
+[4] Team Professor. Fundamentals of Secure Development. Accessed October 2015. 
+https://teamprofessor.absorbtraining.com/ <br>
+[5] https://en.wikipedia.org/wiki/CPU_cache#Multi-level_caches<br>
+					</ul>
+				</section>
+
 
 
 

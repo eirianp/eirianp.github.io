@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>CMake, an Overview</title>
+
+		<meta name="description" content="Presentation 4 for CSCI 5828">
+		<meta name="author" content="Eirian O Perkins">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- BEGIN PRESENTATION -->
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h2>CMake: an Overview</h2>
+					<h4><font color=47D1D1>Eirian Owen Perkins</font></h4>
+					<p>
+						CSCI 5828 - Presentation 4
+					</p>
+				</section>
+
+				<section>
+					<h2>Table of Contents</h2>
+					<ol>
+						<li>Introduction</li>
+						<li>What is a Build System</li>
+						<li>Unit is Build Automation</li>
+						<li>Motivation</li>
+						<li>Build System Requirements</li>
+						<li>CMake, CTest, and CPack</li>
+						<li>Discussion and Conclusions</li>
+					</ol>
+				</section>
+
+				<section>
+					<h2>Introduction</h2>
+					<img src="presentation4-files/usage1.png" >
+				</section>
+
+				<section>
+					<h2>Introduction</h2>
+					<ul>
+						<li>The image in the previous slide gave some terminilogy, let's go over it</li>
+						<ul>
+							<li>Build System</li>
+							<li>Build Directory</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is a Build System</h2>
+					<ul>
+						<li>"Build systems are software tools designed to automate the process of program compilation. Build systems come in various forms, and are used for a variety of software build tasks."<small>[1]</small></li>
+						<ul>
+						<li>map files to an executable</li>
+						<li>assumption: "each of the build actions are idempotent"</li>
+						<ul>
+							<li>none of the build actions are dependent on another</li>
+						</ul>
+						<li>impact: the build system can make optimizations -- skip build actions that have already been performed</li>
+						<li>Why is this useful? If you are building a large project and you only want to test small changes, you probably only want to rebuild the parts that changed.</li>
+						<!--ul>
+							<li>I have personally seen builds take 30 minutes (and up!) to complete</li>
+						</ul-->
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is a build directory?</h2>
+					<ul>
+						<li>Simply the directory the build is written to</li>
+						<li>It is useful to have a separate build directory than source directory</li>
+						<li>Projects can get to be very large</li>
+						<li>Multiple executables can be created from shared code</li>
+						<li>...So don't clutter up the source folders</li>
+						<li>Especially if you are using revision control</li>
+						<li>And when a separate team is responsible for the builds</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What is Build Automation<small>[3]</small></h2>
+					<ul>
+						<li>Automating a software build</li>
+						<ul>
+							<li>compiling</li>
+							<li>packaging</li>
+						</ul>
+						<li>Running automated tests</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Motivation</h2>
+					<ul>
+						<li>There are several advantages to build automation <small>[5]</small></li>
+						<ul>
+						<li>Build automation is a prerequisite for "continuous integration and continuous testing"</li>
+							<ul>
+							<li>Continuous integration involves keeping the master branch (trunk) up to date with every change and builds several times a day</li>
+							<li>A narrow definition of continuous testing is running automated tests after each new build</li>
+							</ul>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Motivation</h2>
+					<ul>
+						<li>There are several advantages to build automation <small>[5]</small></li>
+						<ul>
+						<li>Quick turn-around time for continuous integration and testing allows developers to catch problems earlier, increasing product quality</li>
+						<li>Speed up development time, since the build system abstracts away the accidental difficulty of compiling and linking</li>
+						<li>Reduce repetitiveness</li>
+						<li>Maintain a history of builds and releases, which will help to track down latent defects (when they surface)</li>
+						<li>Save time and money, for reasons listed above</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Build System Requirements <small>[1]</small></h2>
+					<ul>
+						<li>Understand the <i>dependencies</i> of the build tasks</li>
+						<li>The same inputs should always create the same outputs</li>
+						<ul><li>Recall: tasks are <i>idempotent</i></li></ul>
+						<li>2 main ways dependencies are specified</li>
+						<ul>
+							<li>implicit</li>
+							<ul>
+								<li>file association (ex: .o has dependency on .c)</li>
+								<li>scan files for dependencies (ex: #include directives)</li>
+							</ul>
+							<li>explicit</li>
+							<ul>
+								<li>specify dependencies in build configuration files</li>
+								<li>CMake example: <small>[1]</small><pre><code>add_executable (hello hello.c hello_io.c)</code></pre>
+							</ul>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Some examples of build systems</h2>
+					<ul>
+						<li>make based</li>
+						<ul>
+							<li>GNU make</li>
+							<li>make</li>
+						</ul>
+						<li>non make-based</li>
+						<ul>
+							<li>Ant</li>
+							<li>Maven</li>
+							<li>Gradle</li>
+							<li>Leinigen</li>
+							<li>Rake</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Some examples of build systems</h2>
+					<ul>
+						<li>Build script generation tools</li>
+						<ul>
+							<li><font color=47D1D1>CMake</font></li>
+						</ul>
+						<li>Continuous Integration</li>
+						<ul>
+							<li>Bamboo</li>
+							<li>Jenkins</li>
+						</ul>
+					</ul>
+				</section>
+
+			
+
+				<section>
+					<h2>What exactly IS CMake?</h2>
+					<ul>
+						<li>"CMake is an extensible, open-source system that manages the build process in an operating system and in a compiler-independent manner. Unlike many cross-platform systems, CMake is designed to be used in conjunction with the native build environment." <small>[4]</small></li>
+						<ul>
+							<li>In other words, CMake generates native make files</li>
+					</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>What exactly is CMake?</h2>
+					<ul>
+						<li>CMake can generate any number of different builds from the same source files</li>
+						<ul>
+							<li>GCOV or Bullseye builds for code coverage</li>
+							<li>Create a library with static or dynamic linking</li>
+							<li>Any number of targets (main program, library, unit tests, smaller tools based on the library, etc)</li>
+							<li>Create a package (RPM, DEB, etc.) More on this later</li>
+							<li>Compatible with SWIG to generate different interfaces for a C/C++ library. Seriously, this is cool. <a href="http://www.swig.org">Read more here</a>.</li>
+						</ul>
+					</ul>
+				</section>
+
+
+				<section>
+					<h2>Installing CMake</h2>
+					<ul>
+						<li><pre><code>$ brew install cmake</code></pre></li>
+						<li>Or, your favorite package manager</li>
+						<li>Make sure you know what version you are using, there maybe incompatibilities or deprecation functionality</li>
+						<li><pre><code>eiriano> cmake --version                        
+cmake version 3.4.0
+
+CMake suite maintained and supported by Kitware (kitware.com/cmake).</code></pre>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CMake Rules</h2>
+					<ul>
+						<li>CMake auto-generates a native build system</li>
+						<li>A configuration file named "CMakeLists.txt" must exist in every source directory</li>
+						<li>CMake can also generate IDE projects</li>
+						<ul>
+							<li>XCode</li>
+							<li>Code Blocks</li>
+							<li>Eclipse</li>
+							<li>...And more!</li>
+						</ul>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Generating an IDE project</h2>
+					<ul>
+						<li><a href="https://cmake.org/Wiki/Eclipse_CDT4_Generator">An excellent tutorial can be found here, please check it out, it's short!</a></li>
+						<li><pre><code>$ cmake -G"Eclipse CDT4 - Unix Makefiles" /your/source/path</code></pre></li>
+						<li>Following the instructions above, a "source" project and "build" project will be generated</li>
+						<li>Both generated projects are just hidden files</li>
+						<li>The source project is simply the source files</li>
+						<li>The build project has all dependencies configured (!!!)</li>
+						<li>This is awesome for large projects with lots of dependencies (and specific versioning).</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Running CMake</h2>
+					<ul>
+						<li>Create a build directory: $ mkdir build</li>
+						<li>Go into the build directory: $ cd build</li>
+						<li>Configure the build: $ cmake /path/to/source/</li>
+						<ul>
+							<li>auto-detect dependencies, compiler versions, check against minimum version (if specified, good idea for libraries with backwards-incompatibilities like Boost)</li>
+							<li>this info gets written to a <i>cache</i> file, which is actually just another configuration file <small>[4]</small></li>
+						</ul>
+						<li>Build the project: $ make</li>
+						<br>
+						<li>You can add more threads too: $ make -j 2</li>
+						<li>Don't add more threads than cores or CMake may crash</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Running CMake</h2>
+					<ul>
+						<li>You can make changes to the cache (configuration) by running the steps again on the previous slide. Variables may be passed in to the cmake command with -D</li>
+						<li>Or, use a graphicalish interface with "ccmake"</li>
+						<li><a href="https://cmake.org/runningcmake/">more info here</a></li>
+						<li>Of course you can clean up: $ make clean</li>
+						<li>...Build every target: $ make all</li>
+						<li>...And run tests: $ make test</li>
+						<li>You can also install libraries/binaries: $ sudo make install</li>
+						<li>...and create packages too. More on this later.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CTest</h2>
+					<ul>
+						<li>The "CMake test driver program"</li>
+						<li>It can also run tests in parallel. This sounds like a bad idea if the tests manipulate hardware. If they are truly independent, then this feature could be a big time saver, especially for continuous testing and integration.</li>
+						<li>You can specify a maximum CPU load threshold using --test-load </li>
+						<li>Tests can be quiet, verbose, or verbose only on failure. "Output anything outputted by the test program if the test should fail" with the --output-on-failure option.</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CTest</h2>
+					<ul>
+					<li>Run only tests matching (or not matching) some regex with -R and -E, respectively</li>
+					<li>Use -N to output which tests will run based on regex input, but odn't actually run the tests. This is intended to be used with -R and -E</li>
+					<li>CTest can run as a CDash client</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CDash Interlude</h2>
+					<ul>
+						<li>"CDash is an open source, web-based software testing server. CDash aggregates, analyzes and displays the results of software testing processes submitted from clients located around the world. Developers depend on CDash to convey the state of a software system, and to continually improve its quality. CDash is a part of a larger software process that integrates Kitware’s CMake, CTest, and CPack tools, as well as other external packages used to design, manage and maintain large-scale software systems. Good examples of a CDash are the CMake quality dashboard and the VTK quality dashboard."<small>[7]</small></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CDash Interlude</h2>
+					<ul>
+						<img src="presentation4-files/cdash.png"></img>
+						<li>Glance at this view to see build health -- don't sift through emails</li>
+						<li>Easy to view and digest</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CTest</h2>
+					<ul>
+						<li>Dashboard client modes of operation</li>
+						<ul>
+							<li>nightly</li>
+							<li>continuous</li>
+							<li>experimental</li>
+							<li>custom</li>
+						</ul>
+						<li>Dashboard client can do some or all of these: (not exhaustive list)</li>
+						<ul>
+							<li>test</li>
+							<li>coverage</li>
+							<li>memcheck (Yes! This uses valgrind)</li>
+						</ul>
+						<li>There's a lot more to learn, <a href=https://cmake.org/cmake/help/v3.4/manual/ctest.1.html>read more here</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CPack</h2>
+					<ul>
+						<li>Create packages. For example, RPM packages, DEB, packages, and more! Let's check out what's available on OS X:</li>
+						<img src="presentation4-files/cpack_gen.png" height=400></img>
+					</ul>
+				</section>
+
+				<section>
+					<h2>CPack</h2>
+					<ul>
+						<li>You can specify the configuration you want the package created with.</li>
+						<li>For example, create a package with a DEBUG build.</li>
+						<li>Suppose DEBUG builds have debug-level logging enabled</li>
+						<li>This is great for developers, but not ideal for production.</li>
+						<li>So, don't ship debug builds</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Example -- Building Unit Tests</h2>
+					<ul>
+						<li>CMakeLists.txt example, found in a test directory</li>
+						<li>Notice that we are looping over files and adding dependencies and build destinations -- no reason to specify this per file and blow up the file</li>
+						<img src="presentation4-files/loop_example.png" height=400></img>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion</h2>
+					<ul>
+						<li>The documentation seemed decent, but it was hard for me to learn much, in depth, from CMake's website</li>
+						<li>CMake is developed and maintained by a company called Kitware</li>
+						<li>CMake is free and open source, but you can pay for support</li>
+						<li>You can also pay for a book (manual) on CMake, which is probably why I found the online documentation lacking</li>
+						<li>None of the tutorials I found were comprehensive, but <a href=https://cmake.org/cmake-tutorial/>CMake's tutorial is still pretty good.</a></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Discussion</h2>
+					<ul>
+						<li>I found that the best way to learn CMake is to find an existing project and read through the CMakeLists.txt files</li>
+						<li>The build team at work gave me access to some great examples, but unfortunately I cannot share this copywrited material</li>
+						<li>Take-away: it's more useful to see real-world examples, in context with source code, than to read over basic tutorials with no motivation</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Conclusions</h2>
+					<ul>
+					<li>CMake is pretty cool</li>
+					<li>It's simple to use and easy to learn</li>
+					<li>It generates native Makefiles</li>
+					<li>...and is extremely powerful</li>
+						<ul>
+						<li>Generate interfaces to C/C++ libraries in other languages with SWIG support</li>
+						<li>Supports static/dynamic builds</li>
+						<li>Plugs-in to other great tools</li>
+						</ul>
+					<li>It supports C/C++, Java, and Fortran</li>
+					<li><font color=47D1D1>CMake is a great choice and abstracts away annoying and time consuming accidental difficulties.</font></li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>Where to learn more</h2>
+					<ul>
+						<li>There are a lot of great tutorials available</li>
+						<li>This tutorial was my favorite I came across because the author has a github project for you to play around with:</li>
+						<li>Tutorial: http://derekmolloy.ie/hello-world-introductions-to-cmake/</li>
+						<li>Code: https://github.com/derekmolloy/exploringBB/tree/master/extras/cmake</li>
+					</ul>
+				</section>
+
+				<section>
+					<h2>References</h2>
+<p align=left style="font-size:14px">[ 1] http://www.cs.virginia.edu/~dww4s/articles/build_systems.html    <br>
+[ 2] https://en.wikipedia.org/wiki/List_of_build_automation_software <br>
+[ 3] https://en.wikipedia.org/wiki/Build_automation <br> 
+[ 4] https://cmake.org <br>
+[ 5] https://www.johnlamp.net/cmake-tutorial-1-getting-started.html <br> 
+[ 6] http://www.graphviz.org <br>
+[ 7] http://www.cdash.org <br>
+</p>
+				</section>
+
+				<section>
+					<h2>Thank you!</h2>
+				</section>
+
+
+
+
+
+			<!-- END PRESENTATION -->
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
